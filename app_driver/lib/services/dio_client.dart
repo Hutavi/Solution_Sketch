@@ -1,10 +1,11 @@
+// ignore_for_file: deprecated_member_use
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 
 class DioClient {
   final Dio _api;
-  String baseURL = 'http://34.16.137.128/api';
+  String baseURL = 'http://192.168.1.14:5003/v1/sketch';
 
   DioClient() : _api = Dio() {
     _configureInterceptors();
@@ -15,9 +16,12 @@ class DioClient {
       onRequest: (options, handler) async {
         options.baseUrl = baseURL;
         options.headers = {
-          'Content-Type': 'application/json; charset=UTF-8',
+          // 'Access-Token': accessToken,
+          'Content-Type': 'application/json',
+          ...options.headers
         };
-
+        options.sendTimeout = const Duration(seconds: 60);
+        options.connectTimeout = const Duration(seconds: 60);
         return handler.next(options);
       },
       onResponse: (response, handler) {
@@ -53,7 +57,7 @@ class DioClient {
       throw SocketException(e.toString());
     } on FormatException catch (_) {
       throw const FormatException('Unable to process the data');
-    } catch (e) {
+    } on DioException {
       rethrow;
     }
   }

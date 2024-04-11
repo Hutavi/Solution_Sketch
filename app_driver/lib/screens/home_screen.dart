@@ -20,20 +20,15 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-  void connectServer() {
-    fetchData();
-  }
-
   void fetchData() async {
     try {
       final dio = DioClient();
-      final response = await dio.request('/techstack/getAllTechStack',
-          options: Options(method: 'GET'));
+      final response =
+          await dio.request('/hello-world', options: Options(method: 'GET'));
       if (response.statusCode == 200) {
         setState(() {
-          data = response.data['result'].toString();
+          data = response.data['data'].toString();
         });
-        print("object");
       }
     } catch (e) {
       print(e);
@@ -61,7 +56,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: connectServer,
+              onPressed: () {
+                fetchData();
+              },
               child: const Text('Connect'),
             ),
           ],
